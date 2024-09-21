@@ -29,11 +29,10 @@ template <class T, class O>
 class List {
 public:
     Node<T>* head;
-    Node<T>* end;
     O comp;
 public:
     List(T d) {
-        head = end = new Node<T>(d, nullptr);
+        head = new Node<T>(d, nullptr);
     }
     ~List() {
         while (head) {
@@ -88,9 +87,6 @@ public:
         else {
             newNode->next = prev->next;
             prev->next = newNode;
-            if (newNode->next == nullptr) {
-                end = newNode;
-            }
         }
     }
 
@@ -101,9 +97,6 @@ public:
         }
         else {
             Node<T>* toDelete = prev->next;
-            if (toDelete == end) {
-                end = prev;
-            }
             prev->next = toDelete->next;
             delete toDelete;
         }
