@@ -28,8 +28,8 @@ public:
     Node<T>* head;
     O comp;
 public:
-    List(T d) {
-        head = new Node<T>(d, nullptr);
+    List() {
+        head = nullptr;
     }
     ~List() {
         while (head) {
@@ -102,7 +102,7 @@ public:
 };
 
 int main() {
-    List<int, asc<int>> H(4);
+    List<int, asc<int>> H();
     H.add(5);
     H.add(4);
     H.add(8);
