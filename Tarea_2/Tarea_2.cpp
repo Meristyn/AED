@@ -16,10 +16,7 @@ class Node {
 public:
     T data;
     Node<T>* next;
-    Node(T d, Node<T>* p) {
-        data = d;
-        next = p;
-    }
+    Node(T d, Node<T>* p) : data(d), next(p) {}
     void print() {
         cout << data << "->";
     }
@@ -50,55 +47,56 @@ public:
         cout << "FIN\n";
     }
 
-    Node<T>* findprev(T d) {
-        Node<T>* prev = nullptr;
+    bool find(T d, Node<T>*& elementoEncontrado) {
         Node<T>* current = head;
+        elementoEncontrado = nullptr;
+        Node<T>* previous = nullptr;
 
         while (current && comp(current->data, d)) {
-            prev = current;
+            previous = current;
             current = current->next;
         }
-        return prev;
-    }
 
-    bool find(T d) {
-        Node<T>* current = head;
-        while (current) {
-            if (current->data == d)
-                return true;
-            current = current->next;
-        }
+        elementoEncontrado = previous;
+
+        if (current && current->data == d)
+            return true;
+
         return false;
     }
 
     void add(T d) {
-        if (find(d)) {
+        Node<T>* elementoEncontradoAdd;
+        if (find(d, elementoEncontradoAdd)) {
             cout << "Repetido\n";
             return;
         }
 
-        Node<T>* prev = findprev(d);
         Node<T>* newNode = new Node<T>(d, nullptr);
 
-        if (prev == nullptr) {
+        if (elementoEncontradoAdd == nullptr) {
             newNode->next = head;
             head = newNode;
         }
         else {
-            newNode->next = prev->next;
-            prev->next = newNode;
+            newNode->next = elementoEncontradoAdd->next;
+            elementoEncontradoAdd->next = newNode;
         }
     }
 
     void del(T d) {
-        Node<T>* prev = findprev(d);
-        if (prev == nullptr || prev->next == nullptr) {
-            cout << "No encontrado\n";
+        Node<T>* elementoEncontradoAnterior;
+        if (find(d, elementoEncontradoAnterior)) {
+            Node<T>* toDelete = (elementoEncontradoAnterior) ? elementoEncontradoAnterior->next : head;
+            if (elementoEncontradoAnterior)
+                elementoEncontradoAnterior->next = toDelete->next;
+            else
+                head = toDelete->next;
+
+            delete toDelete;
         }
         else {
-            Node<T>* toDelete = prev->next;
-            prev->next = toDelete->next;
-            delete toDelete;
+            cout << "No encontrado\n";
         }
     }
 };
