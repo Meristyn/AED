@@ -81,7 +81,7 @@ public:
         return true;
     }
 
-    bool hayNodoParaEliminar(T* ElementoActual, Node<T,O>*& NodoAnteriorAEliminar) {
+    bool hayNodoParaEliminar(T* ElementoActual, Node<T, O>*& NodoAnteriorAEliminar) {
         bool falta_mover = false;
         T ele_final;
         if (next) {
@@ -155,7 +155,8 @@ struct List {
 
     List(int d) {
         elementosPorNodo = d;
-        head = end = new Node<T, O>(elementosPorNodo, nullptr);
+        head = nullptr;
+        end = nullptr;
     }
 
     ~List() {
@@ -211,7 +212,7 @@ struct List {
             nodoEncontradoEnAdd = nodoEncontradoEnAdd->next;
             elementoEncontradoEnAdd = nodoEncontradoEnAdd->data;
         }
-        else if(elementoEncontradoEnAdd) {
+        else if (elementoEncontradoEnAdd) {
             elementoEncontradoEnAdd++;
         }
         else {
@@ -229,6 +230,10 @@ struct List {
     }
 
     void add(T d) {
+
+        if (!head) {
+            head = end = new Node<T, O>(elementosPorNodo, nullptr);
+        }
         Node<T, O>* nodoEncontradoEnAdd;
         T* elementoEncontradoEnAdd;
 
@@ -280,7 +285,35 @@ int main() {
     srand(time(NULL));
     List<int, asc<int>> lista(3);
 
-    for (int i = 0; i < 20; i++) {
+    //PRUEBA PARA REVISIÓN
+
+
+    //IMPRIME ESTRUCTURA EN BLANCO
+    lista.print();
+
+    //INGRESA 1 2 3 4 5
+    lista.add(1);
+    lista.add(2);
+    lista.add(3);
+    lista.add(4);
+    lista.add(5);
+    lista.print();
+
+    //INGRESA 6 7 8 9
+    lista.add(6);
+    lista.add(7);
+    lista.add(8);
+    lista.add(9);
+    lista.print();
+
+    //BORRA 2 4 6 8
+    lista.del(2);
+    lista.del(4);
+    lista.del(6);
+    lista.del(8);
+    lista.print();
+
+    /*for (int i = 0; i < 13; i++) {
         int num = rand() % 100;
         cout << "Anadiendo " << num << "\n";
         lista.add(num);
@@ -293,7 +326,7 @@ int main() {
         cout << "Eliminando " << num << "\n";
         lista.del(num);
         lista.print();
-    }
+    }*/
 
     cout << "\n\n\n\t\tFIN DEL PROGRAMA\n\n";
     return 0;
