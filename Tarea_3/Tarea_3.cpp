@@ -1,4 +1,7 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
+
 using namespace std;
 
 template <class T> class asc {
@@ -22,85 +25,120 @@ public:
     Node(int d, Node<T, O>* p) {
         data = new T[d];
         next = p;
-        top = data;
+        top = nullptr;
         capacity = d;
     }
+
     void print() {
         cout << "[";
-        for (T* i = data; i < top - 1; i++) {
+        if (!top) {
+            cout << "lista vacia]";
+            return;
+        }
+        for (T* i = data; i < top; i++) {
             cout << *i << ", ";
         }
-        cout << *(top - 1) << "]";
+        cout << *top << "]";
     }
 
     bool findEnNodo(T d, T*& elementoEncontrado) {
-        T* current = data;
-        elementoEncontrado = current;
-        for (T* current = data; current < top; current++) {
-            if (oper(*current, d)) {
-                elementoEncontrado = current;
-            }
-            else if (*current == d) {
-                elementoEncontrado = current;
-                return true;
-            }
+        if (!top) {
+            elementoEncontrado = nullptr;
+            return false;
         }
-        return false;
+        elementoEncontrado = nullptr;
+        T* ele = data;
+        for (ele; ele <= top && (oper(*ele, d) || *ele == d); ele++) {
+            elementoEncontrado = ele;
+        }
+        if (!elementoEncontrado) {
+            return false;
+        }
+        else if (*elementoEncontrado == d) {
+            return true;
+        }
+        return  false;
     }
 
     bool necesitaOtroNodo() {
-        if (top - data < capacity) {
+        return (top - data >= capacity - 1);
+    }
+
+    bool hayElementoDesbordado(T* elementoInicial, T& elementoDesbordado) {
+        if (!necesitaOtroNodo() || !top) {
+            insert(elementoDesbordado, nullptr);
             return false;
         }
+
+        T ele_reemplazo = elementoDesbordado;
+        elementoDesbordado = *top;
+
+        for (T* shift = top; shift > elementoInicial; shift--) {
+            *shift = *(shift - 1);
+        }
+
+        *elementoInicial = ele_reemplazo;
         return true;
     }
 
-    void insertSimple(T d, T* elementoAnterior) {
-        //Aquí tengo un acceso malo de memoria porque top está fuera de los límites de la lista y *current empieza estando afuera
-        for (T* current = top; current > elementoAnterior; --current) {
-            *current = *(current - 1);
+    bool hayNodoParaEliminar(T* ElementoActual, Node<T,O>*& NodoAnteriorAEliminar) {
+        bool falta_mover = false;
+        T ele_final;
+        if (next) {
+            ele_final = *next->data;
+            falta_mover = true;
+            NodoAnteriorAEliminar = this;
         }
-        *elementoAnterior = d;
+        else {
+            delete NodoAnteriorAEliminar->next;
+            NodoAnteriorAEliminar->next = nullptr;
+            return falta_mover;
+        }
+        for (T* shift = ElementoActual; shift < top; shift++) {
+            *(shift) = *(shift + 1);
+        }
+        *top = ele_final;
+        return falta_mover;
+    }
+
+    bool del(T* elementoActual) {
+        bool falta_mover = false;
+        T ele_final = *top;
+        for (T* shift = elementoActual; shift < top; shift++) {
+            *(shift) = *(shift + 1);
+        }
+        if (next) {
+            ele_final = *next->data;
+            falta_mover = true;
+        }
+        else {
+            top--;
+        }
+        *top = ele_final;
+        return falta_mover;
+    }
+
+    void insert(T d, T* elementoAnterior) {
+        if (!top) {
+            *data = d;
+            top = data;
+            return;
+        }
+        if (!elementoAnterior) {
+            for (T* current = top + 1; current > data; --current) {
+                *current = *(current - 1);
+            }
+            *data = d;
+        }
+        else {
+            for (T* current = top + 1; current > elementoAnterior + 1; --current) {
+                *current = *(current - 1);
+            }
+            *(elementoAnterior + 1) = d;
+        }
         top++;
         return;
     }
-
-    bool insertComplejo(T d, T* elementoAnterior, T& ultimoElemento) {
-        if (!next && elementoAnterior == top - 1) {
-            Node<T, O>* nuevoNodo = new Node<T, O>(capacity, nullptr);
-            next = nuevoNodo;
-            *(next->data) = d;
-            next->top++;
-            return false;
-        }
-        ultimoElemento = *(top - 1);
-        for (T* current = top; current > elementoAnterior; --current) {
-            *current = *(current - 1);
-        }
-        *elementoAnterior = d;
-        return true;
-    }
-
-    void delSimple(T* elementoAEliminar) {
-        for (T* current = elementoAEliminar; current < top - 1; ++current) {
-            *current = *(current + 1);
-        }
-        top--;
-    }
-
-    bool delComplejo(T* elementoAEliminar) {
-        delSimple(elementoAEliminar);
-
-        if (next && next->data != next->top) {
-            *(top) = *(next->data);
-            top++;
-            next->delSimple(next->data);
-            return false;
-        }
-
-        return true;
-    }
-
 
     ~Node() {
         delete[] data;
@@ -111,15 +149,15 @@ template <class T, class O>
 struct List {
 
     Node<T, O>* head;
-    T* last;
+    Node<T, O>* end;
     int elementosPorNodo;
     O comp;
 
     List(int d) {
         elementosPorNodo = d;
-        head = new Node<T, O>(elementosPorNodo, nullptr);
-        last = head->data;
+        head = end = new Node<T, O>(elementosPorNodo, nullptr);
     }
+
     ~List() {
         while (head) {
             Node<T, O>* p = head->next;
@@ -127,6 +165,7 @@ struct List {
             head = p;
         }
     }
+
     void print() {
         Node<T, O>* current = head;
         cout << "HEAD->";
@@ -142,89 +181,120 @@ struct List {
         Node<T, O>* current = head;
         nodoEncontrado = current;
         elementoEncontradoEnElNodo = current->data;
-        T current_last = *((current->top) - 1);
-        while (current) {
-            current_last = *((current->top) - 1);
-            if (comp(d, current_last) || current_last == d) {
-                if (current->findEnNodo(d, elementoEncontradoEnElNodo)) {
-                    nodoEncontrado = current;
-                    return true;
-                }
-            }
-            current = current->next;
+        if (!current->top) {
+            elementoEncontradoEnElNodo = nullptr;
+            return false;
+        }
+
+        for (current; current && (comp(*(current->data), d) || *(current->data) == d); current = current->next) {
+            nodoEncontrado = current;
+        }
+
+        if (nodoEncontrado->findEnNodo(d, elementoEncontradoEnElNodo)) {
+            return true;
+        }
+        if (!elementoEncontradoEnElNodo) {
+            return false;
         }
         return false;
+    }
+
+    void manejarDesbordamiento(T d, Node<T, O>* nodoEncontradoEnAdd, T* elementoEncontradoEnAdd) {
+
+        if (end->necesitaOtroNodo()) {
+            Node<T, O>* nuevoNodo = new Node<T, O>(elementosPorNodo, nullptr);
+            end->next = nuevoNodo;
+            end = nuevoNodo;
+        }
+
+        if (elementoEncontradoEnAdd == nodoEncontradoEnAdd->top) {
+            nodoEncontradoEnAdd = nodoEncontradoEnAdd->next;
+            elementoEncontradoEnAdd = nodoEncontradoEnAdd->data;
+        }
+        else if(elementoEncontradoEnAdd) {
+            elementoEncontradoEnAdd++;
+        }
+        else {
+            elementoEncontradoEnAdd = nodoEncontradoEnAdd->data;
+        }
+
+        T* elementoInicial = elementoEncontradoEnAdd;
+        Node<T, O>* current = nodoEncontradoEnAdd;
+        T elementoDesbordado = d;
+
+        while (current->hayElementoDesbordado(elementoInicial, elementoDesbordado) && current->next) {
+            current = current->next;
+            elementoInicial = current->data;
+        }
     }
 
     void add(T d) {
         Node<T, O>* nodoEncontradoEnAdd;
         T* elementoEncontradoEnAdd;
+
         if (find(d, nodoEncontradoEnAdd, elementoEncontradoEnAdd)) {
-            cout << "Repetido\n";
+            cout << "\nRepetido\n";
             return;
         }
 
         if (nodoEncontradoEnAdd->necesitaOtroNodo()) {
-            T ultimoElementoDelNodo;
-            while (nodoEncontradoEnAdd && nodoEncontradoEnAdd->insertComplejo(d, elementoEncontradoEnAdd, ultimoElementoDelNodo)) {
-                if (nodoEncontradoEnAdd->next) {
-                    add(ultimoElementoDelNodo);
-                    return;
-                }
-                else {
-                    Node<T, O>* nuevoNodo = new Node<T, O>(elementosPorNodo, nullptr);
-                    nodoEncontradoEnAdd->next = nuevoNodo;
-                    *(nuevoNodo->data) = ultimoElementoDelNodo;
-                    nuevoNodo->top++;
-                    last = nuevoNodo->data;
-                    return;
-                }
-            }
+            manejarDesbordamiento(d, nodoEncontradoEnAdd, elementoEncontradoEnAdd);
         }
         else {
-            nodoEncontradoEnAdd->insertSimple(d, elementoEncontradoEnAdd);
-            last = nodoEncontradoEnAdd->top - 1;
-            return;
-
+            nodoEncontradoEnAdd->insert(d, elementoEncontradoEnAdd);
         }
     }
 
     void del(T d) {
-        Node<T, O>* nodoEncontrado;
-        T* elementoEncontrado;
+        Node<T, O>* nodoEncontradoEnDel;
+        T* elementoEncontradoEnDel;
+        if (!find(d, nodoEncontradoEnDel, elementoEncontradoEnDel)) {
+            cout << "\nEl elemento no existe\n";
+            return;
+        }
 
-        if (find(d, nodoEncontrado, elementoEncontrado)) {
-            if (nodoEncontrado->next == nullptr && nodoEncontrado->top - nodoEncontrado->data > 1) {
-                nodoEncontrado->delSimple(elementoEncontrado);
+        if (end->data == end->top) {
+            if (elementoEncontradoEnDel == end->data) {
+                Node<T, O>* current = head;
+                for (current; current->next != nodoEncontradoEnDel; current = current->next) {}
+                delete current->next;
+                current->next = nullptr;
             }
-            else {
-                if (!nodoEncontrado->delComplejo(elementoEncontrado)) {
-                    nodoEncontrado = nodoEncontrado->next;
-                    Node<T, O>* nodoPrevio = head;
-                    while (nodoPrevio->next && nodoPrevio->next != nodoEncontrado) {
-                        nodoPrevio = nodoPrevio->next;
-                    }
-                    nodoPrevio->next = nodoEncontrado->next;
-                    delete nodoEncontrado;
-                }
+            Node<T, O>* NodoAnteriorAEliminar;
+            while (nodoEncontradoEnDel->hayNodoParaEliminar(elementoEncontradoEnDel, NodoAnteriorAEliminar)) {
+                nodoEncontradoEnDel = nodoEncontradoEnDel->next;
+                elementoEncontradoEnDel = nodoEncontradoEnDel->data;
             }
+            end = NodoAnteriorAEliminar;
         }
         else {
-            cout << "\nNo existe en la lista\n";
+            while (nodoEncontradoEnDel->del(elementoEncontradoEnDel)) {
+                nodoEncontradoEnDel = nodoEncontradoEnDel->next;
+                elementoEncontradoEnDel = nodoEncontradoEnDel->data;
+            }
         }
     }
 };
 
 int main() {
-    List<int, asc<int>> H(5);
-    H.add(6);
-    H.add(5);
-    H.add(4);
-    H.add(3);
-    H.add(2);
-    H.add(1);
-    H.print();
-    H.del(2);
-    H.print();
+    srand(time(NULL));
+    List<int, asc<int>> lista(3);
+
+    for (int i = 0; i < 20; i++) {
+        int num = rand() % 100;
+        cout << "Anadiendo " << num << "\n";
+        lista.add(num);
+        lista.print();
+    }
+    lista.print();
+
+    for (int i = 0; i < 20; i++) {
+        int num = rand() % 100;
+        cout << "Eliminando " << num << "\n";
+        lista.del(num);
+        lista.print();
+    }
+
+    cout << "\n\n\n\t\tFIN DEL PROGRAMA\n\n";
     return 0;
 }
