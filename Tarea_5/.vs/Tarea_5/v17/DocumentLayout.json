@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\INTEL\\Documents\\Universidad\\AED\\Laboratorio\\Tarea_5\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{EADF3120-31CB-484C-964D-35C755B4E0C2}|Tarea_5.vcxproj|C:\\Users\\INTEL\\Documents\\Universidad\\AED\\Laboratorio\\Tarea_5\\Tarea_5.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{EADF3120-31CB-484C-964D-35C755B4E0C2}|Tarea_5.vcxproj|solutionrelative:Tarea_5.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Tarea_5.cpp",
+              "DocumentMoniker": "C:\\Users\\INTEL\\Documents\\Universidad\\AED\\Laboratorio\\Tarea_5\\Tarea_5.cpp",
+              "RelativeDocumentMoniker": "Tarea_5.cpp",
+              "ToolTip": "C:\\Users\\INTEL\\Documents\\Universidad\\AED\\Laboratorio\\Tarea_5\\Tarea_5.cpp",
+              "RelativeToolTip": "Tarea_5.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-09T03:22:34.035Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
