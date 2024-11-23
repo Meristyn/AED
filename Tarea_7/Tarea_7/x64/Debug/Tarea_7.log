@@ -1,0 +1,19 @@
+﻿  Tarea_7.cpp
+C:\Users\INTEL\Documents\Universidad\AED\Laboratorio\Tarea_7\Tarea_7.cpp(97,76): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+      C:\Users\INTEL\Documents\Universidad\AED\Laboratorio\Tarea_7\Tarea_7.cpp(97,76):
+      el contexto de creación de instancias de la plantilla (el más antiguo primero) es
+          C:\Users\INTEL\Documents\Universidad\AED\Laboratorio\Tarea_7\Tarea_7.cpp(164,18):
+          Vea la referencia a la creación de una instancia de clase plantilla "AVLTree<int>" que se está compilando
+          C:\Users\INTEL\Documents\Universidad\AED\Laboratorio\Tarea_7\Tarea_7.cpp(87,10):
+          al compilar la función del miembro clase plantilla "void AVLTree<int>::drawTree(sf::RenderWindow &,AVLNode<T> *,float,float,float,float)"
+          with
+          [
+              T=int
+          ]
+              C:\Users\INTEL\Documents\Universidad\AED\Laboratorio\Tarea_7\Tarea_7.cpp(157,21):
+              vea la primera referencia a “AVLTree<int>::drawTree” en “AVLTree<int>::visualize”
+              C:\Users\INTEL\Documents\Universidad\AED\Laboratorio\Tarea_7\Tarea_7.cpp(176,18):
+              vea la primera referencia a “AVLTree<int>::visualize” en “main”
+  
+C:\Users\INTEL\Documents\Universidad\AED\Laboratorio\Tarea_7\Tarea_7.cpp(106,77): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+  Tarea_7.vcxproj -> C:\Users\INTEL\Documents\Universidad\AED\Laboratorio\Tarea_7\x64\Debug\Tarea_7.exe
